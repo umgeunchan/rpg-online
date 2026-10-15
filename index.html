@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>모험의 땅</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: #14161c; color: #e6e6e6; font-family: system-ui, sans-serif; }
+  #login { margin: 15vh auto 0; display: flex; flex-direction: column; gap: 10px; width: min(280px, calc(100% - 32px)); }
+  input, select, button { padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #444; background: #22252e; color: inherit; }
+  button { background: #3b6ef5; border: none; cursor: pointer; }
+  #game { display: none; gap: 12px; padding: 12px; height: 100%; }
+  #view { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  canvas { width: 100%; flex: 1; min-height: 0; border: 2px solid #333; border-radius: 6px; background: #000; touch-action: none; }
+  #side { width: 300px; display: flex; flex-direction: column; gap: 8px; }
+  #stats { background: #22252e; padding: 10px; border-radius: 6px; line-height: 1.6; }
+  #log { flex: 1; min-height: 0; background: #22252e; padding: 10px; border-radius: 6px; overflow-y: auto; font-size: 14px; }
+  #log div { margin-bottom: 4px; word-break: break-all; }
+  .chat { color: #fff; } .emote { color: #c9a3ff; font-style: italic; } .combat { color: #ff9b7a; } .level { color: #ffd84a; } .sys { color: #888; }
+  .row { display: flex; gap: 6px; } .row input { flex: 1; min-width: 0; }
+  .help { font-size: 12px; color: #888; }
+  #pad { display: none; justify-content: space-between; align-items: center; user-select: none; -webkit-user-select: none; touch-action: none; }
+  #dpad { display: grid; grid-template: repeat(3, 52px) / repeat(3, 52px); gap: 4px; }
+  #pad button { font-size: 22px; padding: 0; background: #2c3140; }
+  #atk { width: 84px; height: 84px; border-radius: 50%; background: #c0392b !important; }
+  /* 터치 기기 또는 좁은 화면: 세로 배치 + 터치 패드 */
+  @media (pointer: coarse), (max-width: 760px) {
+    #game { flex-direction: column; padding: 8px; }
+    #view { flex: none; height: 55vh; }
+    #side { width: 100%; flex: 1; min-height: 0; }
+    #pad { display: flex; }
+    #stats { padding: 6px 10px; font-size: 14px; line-height: 1.4; }
+    #log { min-height: 80px; }
+    .help { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="login">
+  <h2>⚔️ 모험의 땅</h2>
+  <input id="name" placeholder="캐릭터 이름" maxlength="12">
+  <select id="cls">
+    <option value="warrior">🛡️ 전사: 체력이 높음</option>
+    <option value="mage">🧙 마법사: 사거리 3</option>
+    <option value="rogue">🗡️ 도적: 치명타 40%</option>
+  </select>
+  <button id="start">입장</button>
+</div>
+<div id="game">
+  <div id="view">
+    <canvas id="c"></canvas>
+    <div id="pad">
+      <div id="dpad">
+        <span></span><button data-dir="up">▲</button><span></span>
+        <button data-dir="left">◀</button><span></span><button data-dir="right">▶</button>
+        <span></span><button data-dir="down">▼</button><span></span>
+      </div>
+      <button id="atk">⚔️</button>
+    </div>
+  </div>
+  <div id="side">
+    <div id="stats"></div>
+    <div id="log"></div>
+    <div class="row"><input id="chat" placeholder="대화 (/me 행동 묘사)" maxlength="120" enterkeyhint="send"><button id="send">전송</button></div>
+    <div class="help">이동: WASD/방향키 · 공격: Space · 대화: Enter<br>🏠 마을 안은 안전하고 체력이 회복됩니다.</div>
+  </div>
+</div>
+<script>
+const T = 24, ICON = { warrior: '🛡️', mage: '🧙', rogue: '🗡️', slime: '🟢', goblin: '👺', wolf: '🐺' };
+const TILE = ['#3d7a3a', '#1f4a24', '#2f5f9e', '#8a7350'];
+const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+let token, myId, map, state = { players: [], monsters: [] };
+
+document.getElementById('start').onclick = () => {
+  const name = document.getElementById('name').value, cls = document.getElementById('cls').value;
+  const es = new EventSource(`/events?name=${encodeURIComponent(name)}&cls=${cls}`);
+  es.addEventListener('init', e => { ({ token, id: myId, map } = JSON.parse(e.data)); });
+  es.addEventListener('state', e => { state = JSON.parse(e.data); draw(); });
+  es.addEventListener('log', e => addLog(JSON.parse(e.data)));
+  es.onerror = () => addLog({ text: '서버 연결이 끊겼습니다. 재연결 중...', kind: 'sys' });
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('game').style.display = 'flex';
+  resize();
+};
+
+const act = a => token && fetch('/act', { method: 'POST', body: JSON.stringify({ token, ...a }) });
+
+function addLog({ text, kind }) {
+  const box = document.getElementById('log'), d = document.createElement('div');
+  d.className = kind; d.textContent = text; // textContent: 다른 플레이어 입력을 HTML로 해석하지 않음
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+  while (box.children.length > 200) box.firstChild.remove();
+}
+
+const chat = document.getElementById('chat');
+const sendChat = () => { act({ type: 'chat', text: chat.value }); chat.value = ''; chat.blur(); };
+document.getElementById('send').onclick = sendChat;
+chat.onkeydown = e => {
+  if (e.key === 'Enter') sendChat();
+  if (e.key === 'Escape') chat.blur();
+  e.stopPropagation();
+};
+const KEYS = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' };
+addEventListener('keydown', e => {
+  if (KEYS[e.key]) { act({ type: 'move', dir: KEYS[e.key] }); e.preventDefault(); }
+  else if (e.key === ' ') { act({ type: 'attack' }); e.preventDefault(); }
+  else if (e.key === 'Enter') { chat.focus(); e.preventDefault(); }
+});
+
+// 터치 버튼: 누르고 있으면 반복 (서버 쿨다운보다 약간 느리게)
+function hold(btn, a, ms) {
+  let timer;
+  const stop = () => clearInterval(timer);
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); act(a); stop(); timer = setInterval(() => act(a), ms); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+}
+document.querySelectorAll('#dpad button').forEach(b => hold(b, { type: 'move', dir: b.dataset.dir }, 150));
+hold(document.getElementById('atk'), { type: 'attack' }, 420);
+
+// 캔버스를 실제 표시 크기 × 픽셀 밀도로 맞춰 모바일에서도 선명하게
+function resize() {
+  const dpr = devicePixelRatio || 1;
+  canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+addEventListener('resize', resize);
+
+function bar(x, y, hp, max, color) {
+  ctx.fillStyle = '#000'; ctx.fillRect(x * T, y * T - 4, T, 3);
+  ctx.fillStyle = color; ctx.fillRect(x * T, y * T - 4, T * Math.max(0, hp) / max, 3);
+}
+function draw() {
+  if (!map) return;
+  const cw = canvas.clientWidth, ch = canvas.clientHeight, W = map[0].length, H = map.length;
+  const me = state.players.find(p => p.id === myId);
+  // 카메라: 내 캐릭터 중심, 맵 밖으로 나가지 않게 고정 (맵이 화면보다 작으면 가운데 정렬)
+  const cam = (pos, view, size) => size * T <= view ? (size * T - view) / 2 : Math.min(Math.max(pos * T + T / 2 - view / 2, 0), size * T - view);
+  const cx = me ? cam(me.x, cw, W) : 0, cy = me ? cam(me.y, ch, H) : 0;
+  ctx.save();
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cw, ch);
+  ctx.translate(-Math.round(cx), -Math.round(cy));
+  map.forEach((row, y) => row.forEach((t, x) => { ctx.fillStyle = TILE[t]; ctx.fillRect(x * T, y * T, T, T); }));
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '18px serif';
+  for (const m of state.monsters) { ctx.fillText(ICON[m.kind], m.x * T + T / 2, m.y * T + T / 2 + 1); bar(m.x, m.y, m.hp, m.maxHp, '#e44'); }
+  for (const p of state.players) {
+    if (p.id === myId) { ctx.strokeStyle = '#ffd84a'; ctx.strokeRect(p.x * T, p.y * T, T, T); }
+    ctx.font = '18px serif'; ctx.fillText(ICON[p.cls], p.x * T + T / 2, p.y * T + T / 2 + 1);
+    bar(p.x, p.y, p.hp, p.maxHp, '#4e4');
+    ctx.font = '11px sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(`${p.name} Lv${p.lv}`, p.x * T + T / 2, p.y * T - 11);
+    if (p.say) {
+      const w = ctx.measureText(p.say).width + 10;
+      ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fillRect(p.x * T + T / 2 - w / 2, p.y * T - 38, w, 16);
+      ctx.fillStyle = '#000'; ctx.fillText(p.say, p.x * T + T / 2, p.y * T - 30);
+    }
+    if (p.fx) { ctx.strokeStyle = p.fx.crit ? '#ffd84a' : '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(p.x * T + T / 2, p.y * T + T / 2); ctx.lineTo(p.fx.x * T + T / 2, p.fx.y * T + T / 2); ctx.stroke(); ctx.lineWidth = 1; }
+  }
+  ctx.restore();
+  if (me) document.getElementById('stats').innerHTML =
+    `<b>${ICON[me.cls]} ${esc(me.name)}</b> · Lv ${me.lv} · 접속자 ${state.players.length}명<br>HP ${me.hp} / ${me.maxHp} · 공격력 ${me.atk} · XP ${me.xp} / ${me.lv * 10}`;
+}
+const esc = s => s.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
+</script>
+</body>
+</html>

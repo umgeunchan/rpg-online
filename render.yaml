@@ -1,0 +1,9 @@
+# shortcut: 게임 상태가 메모리에 있으므로 인스턴스는 반드시 1개. 여러 대로 늘리려면 Redis 등 공유 저장소 필요.
+services:
+  - type: web
+    name: rpg-online
+    runtime: node
+    plan: free
+    buildCommand: "true"
+    startCommand: node server.js
+    healthCheckPath: /
