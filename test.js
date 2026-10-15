@@ -36,10 +36,15 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   assert.equal(a.init.map.length, 30);
 
   const before = a.me();
-  for (const dir of ['up', 'down', 'left', 'right']) { await a.act({ type: 'move', dir }); await wait(150); }
-  await a.act({ type: 'move', dir: 'teleport' });
+  await a.act({ type: 'pos', x: before.x + 0.3, y: before.y, yaw: 1 });
   await wait(200);
-  assert.ok(Math.abs(a.me().x - before.x) + Math.abs(a.me().y - before.y) <= 2, '한 칸씩만 이동');
+  assert.ok(Math.abs(a.me().x - (before.x + 0.3)) < 1e-9, '정상 이동은 반영');
+  assert.equal(a.me().yaw, 1);
+  await a.act({ type: 'pos', x: before.x + 10, y: before.y, yaw: 1 });
+  await a.act({ type: 'pos', x: 'NaN', y: null, yaw: 1 });
+  await wait(200);
+  assert.ok(Math.abs(a.me().x - (before.x + 0.3)) < 1e-9, '순간이동/잘못된 좌표는 거부');
+  assert.ok(a.events.some(e => e.ev === 'correct'), '거부 시 위치 보정 이벤트');
 
   await a.act({ type: 'chat', text: '안녕하세요!' });
   await a.act({ type: 'chat', text: '/me 손을 흔든다' });
