@@ -11,36 +11,58 @@
   canvas { display: block; }
   input, select, button { padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #444; background: #22252e; color: inherit; font-family: inherit; }
   button { background: #3b6ef5; border: none; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
   #login { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: radial-gradient(#2a3550, #0d0f16); }
   #login > div { display: flex; flex-direction: column; gap: 10px; width: min(300px, calc(100% - 32px)); }
   #login h1 { margin: 0 0 8px; text-align: center; font-size: 32px; }
-  .panel { background: rgba(10, 12, 20, .6); border-radius: 8px; padding: 8px 10px; }
+  #login small { color: #9aa; text-align: center; }
+  .panel { background: rgba(10, 12, 20, .65); border-radius: 8px; padding: 8px 10px; }
   #hud { position: fixed; inset: 0; pointer-events: none; display: none; }
-  #stats { position: absolute; top: 12px; left: 12px; width: 220px; font-size: 14px; line-height: 1.5; }
+  #stats { position: absolute; top: 12px; left: 12px; width: 230px; font-size: 14px; line-height: 1.5; }
   .bar { height: 8px; background: #400; border-radius: 4px; overflow: hidden; margin: 2px 0 4px; }
   .bar > div { height: 100%; background: #e44; transition: width .2s; }
   #xpbar > div { background: #ffd84a; }
   #mini { position: absolute; top: 12px; right: 12px; width: 160px; height: 120px; border-radius: 8px; border: 2px solid rgba(255,255,255,.3); }
+  #zone { position: absolute; top: 140px; right: 12px; width: 160px; text-align: center; font-size: 13px; }
   #cross { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: #fff; box-shadow: 0 0 3px #000; }
-  #log { position: absolute; left: 12px; bottom: 64px; width: min(420px, calc(100% - 24px)); font-size: 14px; text-shadow: 0 1px 2px #000; }
+  #banner { position: absolute; top: 22%; width: 100%; text-align: center; font-size: 34px; font-weight: 800; text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity 1s; }
+  #banner small { display: block; font-size: 16px; font-weight: 400; }
+  #log { position: absolute; left: 12px; bottom: 64px; width: min(440px, calc(100% - 24px)); font-size: 14px; text-shadow: 0 1px 2px #000; }
   #log div { margin-top: 3px; word-break: break-all; }
-  .chat { color: #fff; } .emote { color: #d7b8ff; font-style: italic; } .combat { color: #ffb39a; } .level { color: #ffd84a; } .sys { color: #bbb; }
-  #chat { position: absolute; left: 12px; bottom: 12px; width: min(420px, calc(100% - 24px)); pointer-events: auto; display: none; }
+  .chat { color: #fff; } .emote { color: #d7b8ff; font-style: italic; } .combat { color: #ffb39a; } .level { color: #ffd84a; } .sys { color: #bbb; } .loot { color: #8fe3ff; }
+  #chat { position: absolute; left: 12px; bottom: 12px; width: min(440px, calc(100% - 24px)); pointer-events: auto; display: none; }
+  #interact { position: absolute; left: 50%; bottom: 22%; transform: translateX(-50%); pointer-events: auto; display: none; background: rgba(20, 24, 36, .85); border: 1px solid #ffd84a; }
   #hurt { position: absolute; inset: 0; background: radial-gradient(transparent 50%, rgba(255,0,0,.7)); opacity: 0; transition: opacity .4s; }
   #lock { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.45); text-align: center; line-height: 1.8; cursor: pointer; }
   #lock b { font-size: 24px; }
+  #panel { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 16px)); max-height: 86vh; display: none; flex-direction: column;
+           background: rgba(16, 18, 28, .96); border: 1px solid #3a3f55; border-radius: 12px; z-index: 5; user-select: text; touch-action: pan-y; }
+  #panel .ph { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #2c3042; }
+  #panel .ph b { flex: 1; font-size: 18px; }
+  #pbody { overflow-y: auto; padding: 6px 14px 14px; }
+  #pbody h4 { margin: 14px 0 6px; color: #9aa3c0; font-size: 13px; }
+  .row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #23273a; font-size: 14px; }
+  .row > span { flex: 1; min-width: 0; }
+  .row small { display: block; color: #9aa3c0; font-size: 12px; }
+  .row button, .ph button { padding: 6px 10px; font-size: 13px; white-space: nowrap; }
+  .sell { background: #6b5b2e; } .enh { background: #8e3b2c; } .gray { background: #3a3f55; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 12px; font-size: 14px; }
   #touch { display: none; }
   @media (pointer: coarse) {
     #touch { display: block; }
     #stats { width: 200px; font-size: 12px; top: 8px; left: 8px; }
     #mini { width: 110px; height: 82px; top: 8px; right: 8px; }
+    #zone { top: 94px; right: 8px; width: 110px; font-size: 11px; }
     #log { bottom: 170px; font-size: 12px; left: 8px; }
     #chat { bottom: auto; top: 8px; left: 8px; width: calc(100% - 16px); }
+    #banner { font-size: 24px; }
     #joy { position: fixed; left: 24px; bottom: 24px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.3); }
     #knob { position: absolute; left: 40px; top: 40px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,.5); }
-    #atk, #chatBtn { position: fixed; border-radius: 50%; font-size: 30px; padding: 0; }
-    #atk { right: 24px; bottom: 36px; width: 90px; height: 90px; background: rgba(192, 57, 43, .85); }
-    #chatBtn { right: 40px; bottom: 140px; width: 56px; height: 56px; font-size: 22px; background: rgba(44, 49, 64, .85); }
+    #touch button { position: fixed; border-radius: 50%; padding: 0; width: 54px; height: 54px; font-size: 22px; background: rgba(44, 49, 64, .85); }
+    #touch #atk { right: 24px; bottom: 36px; width: 90px; height: 90px; font-size: 30px; background: rgba(192, 57, 43, .85); }
+    #potBtn { right: 126px; bottom: 30px; }
+    #bagBtn { right: 40px; bottom: 140px; }
+    #chatBtn { right: 40px; bottom: 204px; }
   }
 </style>
 </head>
@@ -54,19 +76,26 @@
     <option value="rogue">🗡️ 도적: 치명타 40%</option>
   </select>
   <button id="start">입장</button>
+  <small id="resumeHint"></small>
 </div></div>
 <div id="hud">
   <div id="stats" class="panel"></div>
   <canvas id="mini" width="160" height="120"></canvas>
+  <div id="zone" class="panel"></div>
   <div id="cross"></div>
+  <div id="banner"></div>
   <div id="hurt"></div>
   <div id="log"></div>
+  <button id="interact"></button>
   <input id="chat" placeholder="대화 (/me 행동 묘사) · Enter 전송" maxlength="120" enterkeyhint="send">
 </div>
-<div id="lock"><div><b>클릭해서 플레이</b><br>WASD 이동 · 마우스 시점 · 클릭/Space 공격<br>Enter 대화 · Esc 마우스 해제</div></div>
+<div id="panel"><div class="ph"><b>캐릭터</b><span id="gold"></span><button class="gray" data-a="close">✕</button></div><div id="pbody"></div></div>
+<div id="lock"><div><b>클릭해서 플레이</b><br>WASD 이동 · 마우스 시점 · 클릭/Space 공격<br>I 가방 · E 상호작용 · Q 물약 · Enter 대화</div></div>
 <div id="touch">
   <div id="joy"><div id="knob"></div></div>
   <button id="chatBtn">💬</button>
+  <button id="bagBtn">🎒</button>
+  <button id="potBtn">🧪</button>
   <button id="atk">⚔️</button>
 </div>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
@@ -77,8 +106,20 @@ const $ = id => document.getElementById(id);
 const touch = matchMedia('(pointer: coarse)').matches;
 const CLS_COLOR = { warrior: 0x3b6ef5, mage: 0x8e44ad, rogue: 0x34495e };
 const ICON = { warrior: '🛡️', mage: '🧙', rogue: '🗡️' };
-let token, myId, map, W, H, state = { players: [], monsters: [] };
-const me = { x: 0, y: 0, yaw: 0, pitch: 0, cls: 'warrior', hp: 1, maxHp: 1 };
+const GRADE_COLOR = { D: '#9e9e9e', C: '#5ed65e', B: '#4da6ff', A: '#b36bff', S: '#ffd84a', SS: '#ff9f1a', SSR: '#ff4fd8' };
+const GRADES = ['D', 'C', 'B', 'A', 'S', 'SS', 'SSR'];
+const SLOT_KO = { weapon: '무기', armor: '방어구', relic: '유물', accessory: '장식품' };
+const THEMES = {
+  town: { grass: [110, 150, 80], leaf: 0x2e7d32, sky: 0x9fd3ff, fog: [6, 26] },
+  meadow: { grass: [78, 145, 64], leaf: 0x2e7d32, water: 0x3a8fd8, sky: 0x9fd3ff, fog: [6, 26] },
+  dark: { grass: [40, 70, 46], leaf: 0x1b3b2a, water: 0x2a4f5f, sky: 0x2b3d40, fog: [3, 16] },
+  snow: { grass: [222, 232, 240], leaf: 0xe6f2ff, water: 0x9fd4f0, sky: 0xd8e6f0, fog: [5, 22] },
+  lava: { grass: [62, 40, 38], leaf: 0x2a1a18, water: 0xff5a1f, sky: 0x3a1512, fog: [4, 20] },
+};
+let token, myId, map, W, H, zones, npcs, mobs, state = { players: [], monsters: [] }, mine = null;
+const me = { x: 0, y: 0, yaw: 0, pitch: 0, cls: 'warrior' };
+const zoneAt = x => zones.find(z => x >= z.x0 && x < z.x1) || zones[0];
+const themeOf = z => THEMES[z.theme || 'town'];
 
 // ---------- 렌더러 / 씬 ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -95,23 +136,22 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x445533, 2));
 const sun = new THREE.DirectionalLight(0xfff2d0, 2);
 sun.position.set(10, 20, 5);
 scene.add(sun);
-// 무기를 화면 오른쪽 아래에 고정: 세로 화면에서도 보이도록 화면 폭에 맞춰 x 조정
-function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); view.position.x = Math.min(0.28, 0.45 * Math.tan(0.65) * camera.aspect * 0.55); view.scale.setScalar(Math.min(1, camera.aspect * 1.2)); }
-addEventListener('resize', resize);
 
 const lambert = (color, extra) => new THREE.MeshLambertMaterial({ color, ...extra });
 const mesh = (geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); return m; };
+const rgb = hex => [hex >> 16 & 255, hex >> 8 & 255, hex & 255];
 
-// ---------- 월드: 지면 텍스처 + 나무 인스턴스 ----------
+// ---------- 월드 ----------
 function buildWorld() {
   const S = 16, cv = document.createElement('canvas');
   cv.width = W * S; cv.height = H * S;
   const g = cv.getContext('2d');
-  const COLORS = [[78, 145, 64], [62, 120, 52], [52, 110, 175], [150, 132, 104]];
   map.forEach((row, y) => row.forEach((t, x) => {
+    const th = themeOf(zoneAt(x)), grass = th.grass;
+    const base = t === 2 ? rgb(th.water || 0x3a8fd8) : t === 3 || t === 4 ? [150, 132, 104] : t === 5 ? (th === THEMES.snow ? [175, 165, 150] : [140, 110, 75]) : t === 1 ? grass.map(c => c * 0.8) : grass;
     for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
-      const n = (Math.random() - 0.5) * 22, [r, gg, b] = COLORS[t];
-      g.fillStyle = `rgb(${r + n},${gg + n},${b + n})`;
+      const n = (Math.random() - 0.5) * 22;
+      g.fillStyle = `rgb(${base[0] + n},${base[1] + n},${base[2] + n})`;
       g.fillRect(x * S + i * 4, y * S + j * 4, 4, 4);
     }
   }));
@@ -122,42 +162,75 @@ function buildWorld() {
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
-  const trees = [];
-  map.forEach((row, y) => row.forEach((t, x) => t === 1 && trees.push([x, y])));
+  // 관문 기둥 자리에는 나무 대신 기둥
+  const pillar = new Set(zones.slice(1).flatMap(z => [`${z.x0},13`, `${z.x0},18`]));
+  const trees = [], waters = [], lavas = [];
+  map.forEach((row, y) => row.forEach((t, x) => {
+    if (t === 1 && !pillar.has(`${x},${y}`)) trees.push([x, y]);
+    if (t === 2) (zoneAt(x).theme === 'lava' ? lavas : waters).push([x, y]);
+  }));
   const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.08, 0.12, 0.8, 6), lambert(0x6b4423), trees.length);
-  const leaf1 = new THREE.InstancedMesh(new THREE.ConeGeometry(0.5, 1.1, 7), lambert(0x2e7d32), trees.length);
-  const leaf2 = new THREE.InstancedMesh(new THREE.ConeGeometry(0.35, 0.8, 7), lambert(0x388e3c), trees.length);
-  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+  const leaf1 = new THREE.InstancedMesh(new THREE.ConeGeometry(0.5, 1.1, 7), lambert(0xffffff), trees.length);
+  const leaf2 = new THREE.InstancedMesh(new THREE.ConeGeometry(0.35, 0.8, 7), lambert(0xffffff), trees.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), col = new THREE.Color();
   trees.forEach(([x, y], i) => {
     const s = 0.8 + Math.random() * 0.5, sv = new THREE.Vector3(s, s, s);
     q.setFromAxisAngle(up, Math.random() * Math.PI);
     trunk.setMatrixAt(i, m4.compose(new THREE.Vector3(x + 0.5, 0.4 * s, y + 0.5), q, sv));
     leaf1.setMatrixAt(i, m4.compose(new THREE.Vector3(x + 0.5, 1.15 * s, y + 0.5), q, sv));
     leaf2.setMatrixAt(i, m4.compose(new THREE.Vector3(x + 0.5, 1.65 * s, y + 0.5), q, sv));
+    col.setHex(themeOf(zoneAt(x)).leaf).offsetHSL(0, 0, (Math.random() - 0.5) * 0.06);
+    leaf1.setColorAt(i, col); leaf2.setColorAt(i, col);
   });
   scene.add(trunk, leaf1, leaf2);
 
-  // 물 표면: 살짝 반짝이는 반투명 판
-  const water = new THREE.MeshPhongMaterial({ color: 0x3a8fd8, transparent: true, opacity: 0.7, shininess: 100 });
+  const plane = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+  const water = new THREE.InstancedMesh(plane, new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.7, shininess: 100 }), Math.max(1, waters.length));
+  waters.forEach(([x, y], i) => { water.setMatrixAt(i, m4.makeTranslation(x + 0.5, 0.03, y + 0.5)); water.setColorAt(i, col.setHex(themeOf(zoneAt(x)).water)); });
+  water.count = waters.length;
+  const lava = new THREE.InstancedMesh(plane, new THREE.MeshBasicMaterial({ color: 0xff6a1f }), Math.max(1, lavas.length));
+  lavas.forEach(([x, y], i) => lava.setMatrixAt(i, m4.makeTranslation(x + 0.5, 0.03, y + 0.5)));
+  lava.count = lavas.length;
+  scene.add(water, lava);
+
+  // 건물: 3x3 건물 타일 묶음의 왼쪽 위 모서리마다 집 한 채
   map.forEach((row, y) => row.forEach((t, x) => {
-    if (t !== 2) return;
-    const w = mesh(new THREE.PlaneGeometry(1, 1), water, x + 0.5, 0.03, y + 0.5);
-    w.rotation.x = -Math.PI / 2;
-    scene.add(w);
+    if (t !== 4 || row[x - 1] === 4 || map[y - 1][x] === 4) return;
+    scene.add(mesh(new THREE.BoxGeometry(2.8, 1.6, 2.8), lambert(0xe8d8b8), x + 1.5, 0.8, y + 1.5));
+    const roof = mesh(new THREE.ConeGeometry(2.3, 1.2, 4), lambert(0x9c3b2a), x + 1.5, 2.2, y + 1.5);
+    roof.rotation.y = Math.PI / 4;
+    scene.add(roof);
   }));
 
-  // 마을 모서리 등불
-  for (const [x, y] of [[17.1, 12.1], [22.9, 12.1], [17.1, 17.9], [22.9, 17.9]]) {
-    scene.add(mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.2), lambert(0x333333), x, 0.6, y));
-    scene.add(mesh(new THREE.BoxGeometry(0.16, 0.2, 0.16), lambert(0xffcc66, { emissive: 0xffaa33 }), x, 1.25, y));
+  // 관문: 기둥 2개 + 가로대 + 구역 이름 간판
+  const stone = lambert(0x8d8d8d);
+  for (const z of zones.slice(1)) {
+    for (const y of [13.5, 18.5]) scene.add(mesh(new THREE.BoxGeometry(0.5, 2.6, 0.5), stone, z.x0 + 0.5, 1.3, y));
+    scene.add(mesh(new THREE.BoxGeometry(0.4, 0.35, 5.6), stone, z.x0 + 0.5, 2.6, 16));
+    const sign = makeSprite(512, 64, 1.6);
+    drawText(sign, `${z.name}  ·  Lv ${z.minLv}+`, '#ffd84a');
+    sign.position.set(z.x0 + 0.5, 3.15, 16);
+    scene.add(sign);
+  }
+
+  // 마을 NPC
+  for (const n of npcs) {
+    const g = makePlayer('warrior', n.type === 'shop' ? 0x2e8b57 : 0x6d4c41);
+    g.position.set(n.x, 0, n.y);
+    g.rotation.y = Math.PI; // 길 쪽(+z)을 바라봄
+    const sign = makeSprite(256, 64);
+    drawText(sign, n.type === 'shop' ? '🛒 상인' : '🔨 대장장이', '#fff');
+    sign.position.y = 1.1;
+    g.add(sign);
+    scene.add(g);
   }
   drawMiniBase();
 }
 
 // ---------- 캐릭터 / 몬스터 모델 ----------
-function makePlayer(cls) {
+function makePlayer(cls, color = CLS_COLOR[cls]) {
   const g = new THREE.Group();
-  g.add(mesh(new THREE.CapsuleGeometry(0.17, 0.3, 4, 10), lambert(CLS_COLOR[cls]), 0, 0.35, 0));
+  g.add(mesh(new THREE.CapsuleGeometry(0.17, 0.3, 4, 10), lambert(color), 0, 0.35, 0));
   g.add(mesh(new THREE.SphereGeometry(0.13, 12, 10), lambert(0xf1c9a5), 0, 0.72, 0));
   if (cls === 'mage') g.add(mesh(new THREE.ConeGeometry(0.15, 0.3, 10), lambert(0x5b2c83), 0, 0.92, 0));
   const arm = new THREE.Group();
@@ -181,42 +254,45 @@ function makeWeapon(cls, s = 1) {
   g.scale.setScalar(s);
   return g;
 }
-function makeMonster(kind) {
-  const g = new THREE.Group(), eye = lambert(0x111111), red = lambert(0xff3333, { emissive: 0xaa0000 });
-  if (kind === 'slime') {
-    const body = mesh(new THREE.SphereGeometry(0.3, 16, 12), new THREE.MeshPhongMaterial({ color: 0x55dd66, transparent: true, opacity: 0.85, shininess: 90 }), 0, 0.22, 0);
+// 몬스터 = 3가지 기본 모델 × 색 × 크기. 바깥 그룹은 위치/회전, 안쪽 그룹만 크기 조절(이름표는 크기 유지)
+function makeMonster(model, color, scale) {
+  const g = new THREE.Group(), b = new THREE.Group(), eye = lambert(0x111111), red = lambert(0xff3333, { emissive: 0xaa0000 });
+  if (model === 'slime') {
+    const body = mesh(new THREE.SphereGeometry(0.3, 16, 12), new THREE.MeshPhongMaterial({ color, transparent: true, opacity: 0.85, shininess: 90 }), 0, 0.22, 0);
     body.scale.y = 0.75;
-    g.add(body, mesh(new THREE.SphereGeometry(0.04), eye, -0.1, 0.3, -0.24), mesh(new THREE.SphereGeometry(0.04), eye, 0.1, 0.3, -0.24));
+    b.add(body, mesh(new THREE.SphereGeometry(0.04), eye, -0.1, 0.3, -0.24), mesh(new THREE.SphereGeometry(0.04), eye, 0.1, 0.3, -0.24));
     g.userData.bounce = body;
-  } else if (kind === 'goblin') {
-    const skin = lambert(0x7fb03a);
-    g.add(mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.42, 8), lambert(0x6d4c2f), 0, 0.25, 0));
-    g.add(mesh(new THREE.SphereGeometry(0.16, 12, 10), skin, 0, 0.6, 0));
+  } else if (model === 'goblin') {
+    const skin = lambert(color);
+    b.add(mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.42, 8), lambert(0x6d4c2f), 0, 0.25, 0));
+    b.add(mesh(new THREE.SphereGeometry(0.16, 12, 10), skin, 0, 0.6, 0));
     for (const s of [-1, 1]) {
       const ear = mesh(new THREE.ConeGeometry(0.05, 0.2, 6), skin, s * 0.17, 0.66, 0);
       ear.rotation.z = -s * 1.2;
-      g.add(ear, mesh(new THREE.SphereGeometry(0.03), red, s * 0.06, 0.63, -0.14));
+      b.add(ear, mesh(new THREE.SphereGeometry(0.03), red, s * 0.06, 0.63, -0.14));
     }
   } else {
-    const fur = lambert(0x7a7a80);
-    g.add(mesh(new THREE.BoxGeometry(0.3, 0.28, 0.7), fur, 0, 0.38, 0));
-    g.add(mesh(new THREE.BoxGeometry(0.24, 0.22, 0.3), fur, 0, 0.5, -0.45));
-    g.add(mesh(new THREE.BoxGeometry(0.12, 0.1, 0.15), fur, 0, 0.45, -0.65));
+    const fur = lambert(color);
+    b.add(mesh(new THREE.BoxGeometry(0.3, 0.28, 0.7), fur, 0, 0.38, 0));
+    b.add(mesh(new THREE.BoxGeometry(0.24, 0.22, 0.3), fur, 0, 0.5, -0.45));
+    b.add(mesh(new THREE.BoxGeometry(0.12, 0.1, 0.15), fur, 0, 0.45, -0.65));
     for (const s of [-1, 1]) {
-      g.add(mesh(new THREE.ConeGeometry(0.05, 0.12, 4), fur, s * 0.08, 0.66, -0.42));
-      g.add(mesh(new THREE.SphereGeometry(0.025), red, s * 0.07, 0.54, -0.6));
-      g.add(mesh(new THREE.BoxGeometry(0.07, 0.25, 0.07), fur, s * 0.1, 0.12, -0.25), mesh(new THREE.BoxGeometry(0.07, 0.25, 0.07), fur, s * 0.1, 0.12, 0.25));
+      b.add(mesh(new THREE.ConeGeometry(0.05, 0.12, 4), fur, s * 0.08, 0.66, -0.42));
+      b.add(mesh(new THREE.SphereGeometry(0.025), red, s * 0.07, 0.54, -0.6));
+      b.add(mesh(new THREE.BoxGeometry(0.07, 0.25, 0.07), fur, s * 0.1, 0.12, -0.25), mesh(new THREE.BoxGeometry(0.07, 0.25, 0.07), fur, s * 0.1, 0.12, 0.25));
     }
     const tail = mesh(new THREE.BoxGeometry(0.06, 0.06, 0.3), fur, 0, 0.45, 0.45);
     tail.rotation.x = 0.6;
-    g.add(tail);
+    b.add(tail);
   }
+  b.scale.setScalar(scale);
+  g.add(b);
   // 피격 시 붉게 번쩍이기 위해 원래 발광색 기억
   g.traverse(o => o.isMesh && (o.material.userData.e = o.material.emissive.getHex()));
   return g;
 }
 
-// 이름표/말풍선: 캔버스를 텍스처로 쓰는 스프라이트
+// 이름표/말풍선/간판: 캔버스를 텍스처로 쓰는 스프라이트
 function makeSprite(w = 256, h = 64, scale = 1) {
   const cv = document.createElement('canvas');
   cv.width = w; cv.height = h;
@@ -226,6 +302,14 @@ function makeSprite(w = 256, h = 64, scale = 1) {
   s.scale.set(scale * w / h * 0.25, scale * 0.25, 1);
   s.userData.cv = cv;
   return s;
+}
+function drawText(s, text, color) {
+  const cv = s.userData.cv, g = cv.getContext('2d');
+  g.clearRect(0, 0, cv.width, cv.height);
+  g.font = 'bold 28px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.lineWidth = 5; g.strokeStyle = '#000'; g.strokeText(text, cv.width / 2, cv.height / 2);
+  g.fillStyle = color; g.fillText(text, cv.width / 2, cv.height / 2);
+  s.material.map.needsUpdate = true;
 }
 function drawTag(s, name, hp, max, color) {
   const g = s.userData.cv.getContext('2d');
@@ -253,6 +337,9 @@ function drawBubble(s, text) {
 const view = new THREE.Group();
 view.position.set(0.28, -0.26, -0.45);
 camera.add(view);
+// 무기를 화면 오른쪽 아래에 고정: 세로 화면에서도 보이도록 화면 폭에 맞춰 위치/크기 조정
+function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); view.position.x = Math.min(0.28, 0.45 * Math.tan(0.65) * camera.aspect * 0.55); view.scale.setScalar(Math.min(1, camera.aspect * 0.9)); }
+addEventListener('resize', resize);
 resize();
 const bolts = [];
 function fireBolt() {
@@ -269,7 +356,7 @@ const ents = new Map();
 function sync() {
   const seen = new Set();
   for (const p of state.players) {
-    if (p.id === myId) { Object.assign(me, { hp: p.hp, maxHp: p.maxHp, lv: p.lv, xp: p.xp, atk: p.atk, name: p.name }); continue; }
+    if (p.id === myId) continue;
     const k = 'p' + p.id;
     seen.add(k);
     let e = ents.get(k);
@@ -287,12 +374,13 @@ function sync() {
     if (e.say !== p.say) { e.say = p.say; drawBubble(e.bubble, p.say); }
   }
   for (const m of state.monsters) {
-    const k = 'm' + m.id;
+    const k = 'm' + m.id, d = mobs[m.type];
     seen.add(k);
     let e = ents.get(k);
     if (!e) {
-      e = { obj: makeMonster(m.kind), tag: makeSprite(), monster: true };
-      e.tag.position.y = m.kind === 'slime' ? 0.65 : 0.95;
+      e = { obj: makeMonster(d.model, d.color, d.scale), tag: makeSprite(), monster: true };
+      e.tag.position.y = (d.model === 'slime' ? 0.55 : 0.9) * d.scale + 0.15;
+      if (d.boss) e.tag.scale.multiplyScalar(2);
       e.obj.add(e.tag);
       e.obj.position.set(m.x, 0, m.y);
       scene.add(e.obj);
@@ -300,58 +388,123 @@ function sync() {
     }
     if (e.tx !== undefined && (m.x !== e.tx || m.y !== e.ty)) e.yaw = Math.atan2(-(m.x - e.tx), -(m.y - e.ty));
     Object.assign(e, { tx: m.x, ty: m.y });
-    if (e.hp !== m.hp) { e.hp = m.hp; drawTag(e.tag, m.name, m.hp, m.maxHp, '#e44'); }
+    if (e.hp !== m.hp) { e.hp = m.hp; drawTag(e.tag, d.name, m.hp, m.maxHp, '#e44'); }
     e.obj.traverse(o => o.isMesh && o.material.emissive.setHex(m.hit ? 0xff2222 : o.material.userData.e));
   }
   for (const [k, e] of ents) if (!seen.has(k)) { scene.remove(e.obj); ents.delete(k); }
-  updateHud();
 }
 function updateHud() {
-  $('stats').innerHTML = `<b>${ICON[me.cls]} ${esc(me.name || '')}</b> · Lv ${me.lv} · 접속 ${state.players.length}명
-    <div class="bar"><div style="width:${100 * Math.max(0, me.hp) / me.maxHp}%"></div></div>HP ${me.hp} / ${me.maxHp} · 공격력 ${me.atk}
-    <div class="bar" id="xpbar"><div style="width:${100 * me.xp / (me.lv * 10)}%"></div></div>`;
+  if (!mine) return;
+  $('stats').innerHTML = `<b>${ICON[me.cls]} ${esc(me.name || '')}</b> · Lv ${mine.lv}${mine.points ? ` · <span style="color:#ffd84a">포인트 ${mine.points}</span>` : ''}
+    <div class="bar"><div style="width:${100 * Math.max(0, mine.hp) / mine.maxHp}%"></div></div>HP ${mine.hp} / ${mine.maxHp} · 💰 ${mine.gold} · 🧪 ${mine.potions}
+    <div class="bar" id="xpbar"><div style="width:${100 * mine.xp / mine.xpNeed}%"></div></div>`;
 }
-const esc = s => s.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
+const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
-// ---------- 미니맵 ----------
+// ---------- 가방 / 상점 / 대장간 패널 ----------
+const nearNpc = () => npcs?.find(n => Math.hypot(n.x - me.x, n.y - me.y) <= 2.3);
+const statText = it => Object.entries(it.stats).map(([s, v]) => {
+  const k = 1 + 0.1 * it.plus, L = { atk: '공격', def: '방어', hp: '체력', crit: '치명' };
+  return s === 'crit' ? `${L[s]} +${(v * k * 100).toFixed(1)}%` : `${L[s]} +${Math.round(v * k)}`;
+}).join(' · ');
+const itemHtml = it => `<span><b style="color:${GRADE_COLOR[it.grade]}">[${it.grade}]</b> ${esc(it.name)}${it.plus ? ` <b style="color:#ffd84a">+${it.plus}</b>` : ''}<small>${SLOT_KO[it.slot]} · ${statText(it)}</small></span>`;
+const enhBtn = it => it.plus >= 10 ? '<button class="gray" disabled>MAX</button>'
+  : `<button class="enh" data-a="enhance" data-uid="${it.uid}">강화 ${Math.round(it.value * (it.plus + 1) * 0.8)}G · ${Math.max(30, 100 - 7 * it.plus)}%</button>`;
+let panelOpen = false;
+function renderPanel() {
+  if (!panelOpen || !mine) return;
+  const n = nearNpc(), shop = n?.type === 'shop', smith = n?.type === 'smith', m = mine;
+  $('gold').textContent = `💰 ${m.gold}G · 🧪 ${m.potions}`;
+  let h = `<h4>능력치 ${m.points ? `· 남은 포인트 <b style="color:#ffd84a">${m.points}</b>` : ''}</h4>
+    <div class="grid"><span>레벨 ${m.lv} (${m.xp}/${m.xpNeed})</span><span>체력 ${m.hp}/${m.maxHp}</span>
+    <span>공격력 ${m.atk}</span><span>방어력 ${m.def}</span><span>치명타 ${(m.crit * 100).toFixed(1)}%</span><span></span></div>`;
+  if (m.points) h += `<div class="row"><button data-a="stat" data-s="str">힘 ${m.str} (+공격)</button><button data-a="stat" data-s="vit">체력 ${m.vit} (+HP)</button><button data-a="stat" data-s="agi">민첩 ${m.agi} (+치명)</button></div>`;
+  if (shop) {
+    h += `<h4>🛒 상점</h4>`;
+    for (const w of n.wares) h += `<div class="row"><span>${esc(w.name)}</span><button data-a="buy" data-id="${w.id}" ${m.gold < w.price ? 'disabled' : ''}>${w.price}G 구매</button></div>`;
+  }
+  if (smith) h += `<h4>🔨 대장간 · 실패해도 장비는 사라지지 않음</h4>`;
+  h += `<h4>장착 중</h4>`;
+  for (const slot of Object.keys(SLOT_KO)) {
+    const it = m.equip[slot];
+    h += it ? `<div class="row">${itemHtml(it)}${smith ? enhBtn(it) : ''}<button class="gray" data-a="unequip" data-slot="${slot}">해제</button></div>`
+      : `<div class="row"><span style="color:#667">${SLOT_KO[slot]} 비어 있음</span></div>`;
+  }
+  h += `<h4>가방 ${m.inv.length}/30${shop ? ' · 상인 근처라 판매 가능' : ''}</h4>`;
+  const inv = [...m.inv].sort((a, b) => GRADES.indexOf(b.grade) - GRADES.indexOf(a.grade) || b.tier - a.tier);
+  for (const it of inv) h += `<div class="row">${itemHtml(it)}${smith ? enhBtn(it) : ''}${shop ? `<button class="sell" data-a="sell" data-uid="${it.uid}">${Math.round(it.value * (1 + 0.2 * it.plus))}G</button>` : ''}<button data-a="equip" data-uid="${it.uid}">장착</button></div>`;
+  if (!inv.length) h += `<div class="row"><span style="color:#667">몬스터를 잡으면 장비를 얻을 수 있다.</span></div>`;
+  if (!shop && !smith) h += `<h4>마을의 상인·대장장이 근처에서 열면 거래/강화가 가능합니다.</h4>`;
+  $('pbody').innerHTML = h;
+}
+function openPanel() { panelOpen = true; document.exitPointerLock?.(); $('panel').style.display = 'flex'; renderPanel(); updateLock(); }
+function closePanel() { panelOpen = false; $('panel').style.display = 'none'; updateLock(); }
+$('panel').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const a = b.dataset.a;
+  if (a === 'close') return closePanel();
+  if (a === 'stat') act({ type: 'stat', stat: b.dataset.s });
+  else if (a === 'buy') act({ type: 'buy', id: b.dataset.id });
+  else if (a === 'unequip') act({ type: 'unequip', slot: b.dataset.slot });
+  else act({ type: a, uid: +b.dataset.uid });
+});
+$('interact').onclick = openPanel;
+
+// ---------- 미니맵: 내 주변 40x30칸 ----------
 const mini = $('mini').getContext('2d'), miniBase = document.createElement('canvas');
 function drawMiniBase() {
   miniBase.width = W * 4; miniBase.height = H * 4;
-  const g = miniBase.getContext('2d'), C = ['#4e9140', '#1f4a24', '#3a8fd8', '#968468'];
+  const g = miniBase.getContext('2d'), C = ['#4e9140', '#1f4a24', '#3a8fd8', '#968468', '#6a4a3a', '#a8865a'];
   map.forEach((row, y) => row.forEach((t, x) => { g.fillStyle = C[t]; g.fillRect(x * 4, y * 4, 4, 4); }));
 }
 function drawMini() {
-  const sx = 160 / W, sy = 120 / H;
-  mini.drawImage(miniBase, 0, 0, 160, 120);
-  mini.fillStyle = '#f44';
-  for (const m of state.monsters) mini.fillRect(m.x * sx - 1.5, m.y * sy - 1.5, 3, 3);
-  mini.fillStyle = '#5af';
-  for (const p of state.players) if (p.id !== myId) mini.fillRect(p.x * sx - 2, p.y * sy - 2, 4, 4);
-  mini.save(); mini.translate(me.x * sx, me.y * sy); mini.rotate(-me.yaw);
-  mini.fillStyle = '#ffd84a'; mini.beginPath(); mini.moveTo(0, -6); mini.lineTo(4, 4); mini.lineTo(-4, 4); mini.fill();
+  const ox = Math.max(0, Math.min(W - 40, me.x - 20));
+  mini.drawImage(miniBase, ox * 4, 0, 160, 120, 0, 0, 160, 120);
+  const px = (x, y, c, s) => { mini.fillStyle = c; mini.fillRect((x - ox) * 4 - s / 2, y * 4 - s / 2, s, s); };
+  for (const m of state.monsters) px(m.x, m.y, mobs[m.type].boss ? '#f0f' : '#f44', mobs[m.type].boss ? 8 : 3);
+  for (const n of npcs) px(n.x, n.y, '#ffd84a', 4);
+  for (const p of state.players) if (p.id !== myId) px(p.x, p.y, '#5af', 4);
+  mini.save(); mini.translate((me.x - ox) * 4, me.y * 4); mini.rotate(-me.yaw);
+  mini.fillStyle = '#fff'; mini.beginPath(); mini.moveTo(0, -6); mini.lineTo(4, 4); mini.lineTo(-4, 4); mini.fill();
   mini.restore();
 }
 
 // ---------- 네트워크 ----------
+const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+if (store.get('rpg-token')) $('resumeHint').textContent = '서버에 이전 캐릭터가 남아 있으면 이어서 플레이합니다.';
 const act = a => token && fetch('/act', { method: 'POST', body: JSON.stringify({ token, ...a }) });
-$('start').onclick = () => {
-  me.cls = $('cls').value;
-  const es = new EventSource(`/events?name=${encodeURIComponent($('name').value)}&cls=${me.cls}`);
+let es;
+function connect() {
+  const q = new URLSearchParams({ name: $('name').value, cls: $('cls').value });
+  const saved = token || store.get('rpg-token');
+  if (saved) q.set('resume', saved);
+  es = new EventSource('/events?' + q);
   es.addEventListener('init', e => {
-    const d = JSON.parse(e.data);
-    const first = !map;
-    ({ token, id: myId, map, W, H } = d);
-    me.x = d.x; me.y = d.y;
-    if (first) { buildWorld(); view.add(makeWeapon(me.cls)); renderer.setAnimationLoop(frame); }
+    const d = JSON.parse(e.data), first = !map;
+    ({ token, id: myId, map, W, H, zones, npcs, mobs } = d);
+    store.set('rpg-token', token);
+    me.cls = d.cls; me.x = d.x; me.y = d.y;
+    if (first) { me.yaw = -Math.PI / 2; buildWorld(); view.add(makeWeapon(me.cls)); renderer.setAnimationLoop(frame); }
   });
-  es.addEventListener('state', e => { state = JSON.parse(e.data); sync(); });
+  es.addEventListener('state', e => {
+    state = JSON.parse(e.data);
+    const p = state.players.find(p => p.id === myId);
+    if (p && me.name !== p.name) { me.name = p.name; updateHud(); }
+    sync();
+  });
+  es.addEventListener('me', e => { mine = JSON.parse(e.data); updateHud(); renderPanel(); });
   es.addEventListener('log', e => addLog(JSON.parse(e.data)));
   es.addEventListener('correct', e => { const d = JSON.parse(e.data); me.x = d.x; me.y = d.y; });
   es.addEventListener('hurt', () => { $('hurt').style.transition = 'none'; $('hurt').style.opacity = 1; requestAnimationFrame(() => { $('hurt').style.transition = ''; $('hurt').style.opacity = 0; }); });
-  es.onerror = () => addLog({ text: '서버 연결이 끊겼습니다. 재연결 중...', kind: 'sys' });
+  // 끊기면 같은 토큰으로 재접속해 캐릭터를 이어받음
+  es.onerror = () => { es.close(); addLog({ text: '서버 연결이 끊겼습니다. 재연결 중...', kind: 'sys' }); setTimeout(connect, 1500); };
+}
+$('start').onclick = () => {
+  connect();
   $('login').style.display = 'none';
   $('hud').style.display = 'block';
-  if (!touch) $('lock').style.display = 'flex';
+  updateLock();
 };
 function addLog({ text, kind }) {
   const d = document.createElement('div');
@@ -359,20 +512,30 @@ function addLog({ text, kind }) {
   $('log').appendChild(d);
   while ($('log').children.length > 7) $('log').firstChild.remove();
 }
+let bannerTimer;
+function banner(title, sub) {
+  $('banner').innerHTML = `${esc(title)}<small>${esc(sub)}</small>`;
+  $('banner').style.opacity = 1;
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(() => $('banner').style.opacity = 0, 2500);
+}
 
 // ---------- 입력 ----------
 const keys = {};
 let lastAtk = 0, swingAt = 0;
 function attack() {
   const now = performance.now();
-  if (now - lastAtk < 400) return;
+  if (now - lastAtk < 400 || panelOpen) return;
   lastAtk = swingAt = now;
   act({ type: 'attack', yaw: me.yaw });
   if (me.cls === 'mage') fireBolt();
 }
+const potion = () => act({ type: 'potion' });
 const chat = $('chat');
-function openChat() { document.exitPointerLock?.(); chat.style.display = 'block'; chat.focus(); }
-function closeChat() { chat.value = ''; chat.style.display = 'none'; chat.blur(); if (!touch) canvas.requestPointerLock(); }
+const chatOpen = () => chat.style.display === 'block';
+function updateLock() { $('lock').style.display = touch || !map || document.pointerLockElement || chatOpen() || panelOpen ? 'none' : 'flex'; }
+function openChat() { document.exitPointerLock?.(); chat.style.display = 'block'; chat.focus(); updateLock(); }
+function closeChat() { chat.value = ''; chat.style.display = 'none'; chat.blur(); if (!touch) canvas.requestPointerLock(); updateLock(); }
 chat.onkeydown = e => {
   e.stopPropagation();
   if (e.key === 'Enter' && !e.isComposing) { if (chat.value.trim()) act({ type: 'chat', text: chat.value }); closeChat(); }
@@ -381,17 +544,20 @@ chat.onkeydown = e => {
 // e.code 사용: 한글 입력 상태에서도 W키가 'ㅈ'가 아닌 KeyW로 들어옴
 addEventListener('keydown', e => {
   if (!map) return;
+  if (e.code === 'KeyI' || e.code === 'Tab') { panelOpen ? closePanel() : openPanel(); e.preventDefault(); return; }
+  if (e.code === 'Escape' && panelOpen) return closePanel();
+  if (panelOpen) return;
   keys[e.code] = true;
   if (e.code === 'Space') { attack(); e.preventDefault(); }
   if (e.code === 'Enter') { openChat(); e.preventDefault(); }
+  if (e.code === 'KeyQ') potion();
+  if (e.code === 'KeyE' && nearNpc()) openPanel();
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 
 $('lock').onclick = () => canvas.requestPointerLock();
-document.addEventListener('pointerlockchange', () => {
-  $('lock').style.display = document.pointerLockElement || touch || chat.style.display === 'block' ? 'none' : 'flex';
-});
+document.addEventListener('pointerlockchange', updateLock);
 canvas.addEventListener('mousedown', () => document.pointerLockElement === canvas && attack());
 document.addEventListener('mousemove', e => {
   if (document.pointerLockElement !== canvas) return;
@@ -399,7 +565,7 @@ document.addEventListener('mousemove', e => {
   me.pitch = Math.max(-1.4, Math.min(1.4, me.pitch - e.movementY * 0.0025));
 });
 
-// 터치: 왼쪽 조이스틱으로 이동, 화면 드래그로 시점, 버튼으로 공격/대화
+// 터치: 왼쪽 조이스틱으로 이동, 화면 드래그로 시점, 버튼으로 공격/대화/가방/물약
 const joy = { id: null, x: 0, y: 0 }, look = { id: null };
 $('joy').addEventListener('pointerdown', e => { joy.id = e.pointerId; $('joy').setPointerCapture(e.pointerId); moveJoy(e); });
 $('joy').addEventListener('pointermove', e => e.pointerId === joy.id && moveJoy(e));
@@ -424,17 +590,32 @@ let atkTimer;
 $('atk').addEventListener('pointerdown', e => { e.preventDefault(); attack(); clearInterval(atkTimer); atkTimer = setInterval(attack, 100); });
 for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) $('atk').addEventListener(ev, () => clearInterval(atkTimer));
 $('chatBtn').onclick = openChat;
+$('bagBtn').onclick = () => panelOpen ? closePanel() : openPanel();
+$('potBtn').onclick = potion;
 
 // ---------- 매 프레임 ----------
-const blocked = (x, y) => [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]]
-  .some(([ox, oy]) => { const t = map[Math.floor(y + oy)]?.[Math.floor(x + ox)]; return t !== 0 && t !== 3; });
-let last = performance.now(), sentAt = 0, sent = '', walk = 0;
+const CORNERS = [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]];
+let lockMsgAt = 0;
+function blocked(x, y) {
+  for (const [ox, oy] of CORNERS) {
+    const t = map[Math.floor(y + oy)]?.[Math.floor(x + ox)];
+    if (t !== 0 && t !== 3 && t !== 5) return true;
+    const z = zoneAt(x + ox);
+    if (mine && z.minLv > mine.lv) {
+      if (performance.now() - lockMsgAt > 3000) { lockMsgAt = performance.now(); addLog({ text: `🔒 ${z.name}은(는) 레벨 ${z.minLv} 이상만 들어갈 수 있다.`, kind: 'sys' }); }
+      return true;
+    }
+  }
+  return false;
+}
+let last = performance.now(), sentAt = 0, sent = '', walk = 0, curZone = null;
+const skyTarget = new THREE.Color(0x9fd3ff), fogTarget = [6, 26];
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
   // 이동
   let f = 0, s = 0;
-  if (chat.style.display !== 'block') {
+  if (!chatOpen() && !panelOpen) {
     if (keys.KeyW || keys.ArrowUp) f++;
     if (keys.KeyS || keys.ArrowDown) f--;
     if (keys.KeyA || keys.ArrowLeft) s--;
@@ -445,9 +626,24 @@ function frame(now) {
   if (len > 1) { f /= len; s /= len; }
   const sp = 3.5 * dt, sin = Math.sin(me.yaw), cos = Math.cos(me.yaw);
   const dx = (-sin * f + cos * s) * sp, dy = (-cos * f - sin * s) * sp;
-  if (!blocked(me.x + dx, me.y)) me.x += dx;
-  if (!blocked(me.x, me.y + dy)) me.y += dy;
+  if (dx && !blocked(me.x + dx, me.y)) me.x += dx;
+  if (dy && !blocked(me.x, me.y + dy)) me.y += dy;
   walk += Math.hypot(dx, dy) * 9;
+
+  // 구역 진입: 이름 배너 + 하늘/안개 색 전환
+  const z = zoneAt(me.x);
+  if (z !== curZone) {
+    curZone = z;
+    const th = themeOf(z);
+    skyTarget.setHex(th.sky); fogTarget[0] = th.fog[0]; fogTarget[1] = th.fog[1];
+    banner(z.name, z.type === 'town' ? '안전 지대 · 상인과 대장장이가 있다' : z.type === 'boss' ? '최종 보스가 기다린다' : `사냥터 · 권장 레벨 ${z.minLv}+`);
+    $('zone').textContent = `📍 ${z.name}`;
+  }
+  const k = 1 - Math.exp(-dt * 10), kz = 1 - Math.exp(-dt * 2);
+  scene.background.lerp(skyTarget, kz);
+  scene.fog.color.copy(scene.background);
+  scene.fog.near += (fogTarget[0] - scene.fog.near) * kz;
+  scene.fog.far += (fogTarget[1] - scene.fog.far) * kz;
 
   const bob = Math.sin(walk) * 0.025;
   camera.position.set(me.x, 0.62 + bob, me.y);
@@ -462,8 +658,13 @@ function frame(now) {
   const cur = `${me.x.toFixed(2)},${me.y.toFixed(2)},${me.yaw.toFixed(2)}`;
   if (now - sentAt > 100 && cur !== sent) { sentAt = now; sent = cur; act({ type: 'pos', x: me.x, y: me.y, yaw: me.yaw }); }
 
+  // NPC 근처 안내 버튼
+  const n = nearNpc();
+  $('interact').style.display = n && !panelOpen ? 'block' : 'none';
+  if (n) $('interact').textContent = `${n.type === 'shop' ? '🛒 상인과 거래' : '🔨 장비 강화'}${touch ? '' : ' (E)'}`;
+  if (panelOpen && n?.type !== renderPanel.lastNpc) { renderPanel.lastNpc = n?.type; renderPanel(); }
+
   // 다른 엔티티 보간
-  const k = 1 - Math.exp(-dt * 10);
   for (const e of ents.values()) {
     e.obj.position.x += (e.tx - e.obj.position.x) * k;
     e.obj.position.z += (e.ty - e.obj.position.z) * k;
